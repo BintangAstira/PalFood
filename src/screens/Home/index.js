@@ -1,10 +1,16 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const App = () => {
+  const navigation = useNavigation();
+
+  const handlePesanButtonPress = (recipe) => {
+    navigation.navigate('Pesanan', { recipe });
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Selamat Datang di Kuliner Palembang</Text>
+      <Text style={styles.title}>Palembang Food</Text>
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Cari Makanan..." />
         <TouchableOpacity style={styles.searchButton}>
@@ -14,29 +20,18 @@ const App = () => {
       <ScrollView style={styles.recipeContainer}>
         {BlogList.map((recipe) => (
           <View key={recipe.id} style={styles.recipeItem}>
-            <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
+            <Image source={{ uri: recipe.image }} style={styles.recipeImage} onPress={() => navigation.navigate('Pesanan')}/>
             <Text style={styles.recipeTitle}>{recipe.title}</Text>
             <Text style={styles.recipeCategory}>{recipe.category}</Text>
             <Text style={styles.recipeLevel}>{recipe.level}</Text>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button} onPress={handlePesanButtonPress}>
                 <Text style={styles.buttonText}>Pesan</Text>
               </TouchableOpacity>
             </View>
           </View>
         ))}
       </ScrollView>
-      <View style={styles.taskbar}>
-        <TouchableOpacity style={styles.taskbarItem}>
-          <Text style={styles.taskbarText}>Beranda</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.taskbarItem}>
-          <Text style={styles.taskbarText}>Favorit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.taskbarItem}>
-          <Text style={styles.taskbarText}>Profil</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -138,7 +133,7 @@ const styles = StyleSheet.create({
   taskbarText: {
     color: 'black',
   },
-} );
+});
 
 const BlogList = [
   {

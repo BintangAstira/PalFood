@@ -1,18 +1,20 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, TextInput } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const TekwanScreen = () => {
-  const handlePesanButtonPress = () => {
-    // Fungsi yang akan dijalankan ketika tombol "Pesan" ditekan
-    // Anda dapat menambahkan logika pesan atau navigasi ke layar pesanan di sini
-    console.log('Tombol Pesan ditekan');
+
+const PesananScreen = () => {
+  const navigation = useNavigation();
+  const handleLanjutPesanButtonPress = () => {
+    navigation.navigate('Transaksi'); // Navigasi ke layar TransaksiScreen
   };
-
   const handleCariButtonPress = () => {
-    // Fungsi yang akan dijalankan ketika tombol "Cari Makanan" ditekan
     console.log('Tombol Cari Makanan ditekan');
   };
-
+  const handlePesanButtonPress = (selectedTransaction) => {
+    navigation.navigate('Pesanan', { selectedTransaction });
+  };
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.searchContainer}>
@@ -23,27 +25,25 @@ const TekwanScreen = () => {
       </View>
       <Image
         style={styles.MakananImage}
-        source={{
-          uri:
-            'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/republika/member/7fo6bnylc7.jpg',
-        }}
+        source={{ uri: 'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/republika/member/7fo6bnylc7.jpg', }}
       />
       <View style={styles.MakananDetails}>
         <Text style={styles.MakananTitle}>Pempek Campur</Text>
-        <View style={styles.pesananContainer}>
-        <Text style={styles.pesananTitle}>Pesanan Anda</Text>
-        <View style={styles.pesananItem}>
-          <Text style={styles.pesananText}>Pempek Campur (x1)</Text>
-          <Text style={styles.pesananText}>Rp 15,000</Text>
-        </View>
-        {/* Tambahkan item pesanan lain di sini */}
-        <View style={styles.pesananTotal}>
-          <Text style={styles.pesananText}>Total:</Text>
-          <Text style={styles.pesananText}>Rp 15,000</Text>
-        </View>
-        <TouchableOpacity style={styles.lanjutPesanButton} onPress={handlePesanButtonPress}>
-          <Text style={styles.lanjutPesanButtonText}>Lanjutkan Pesanan</Text>
-        </TouchableOpacity>
+        <View style={styles.PesananContainer}>
+          <Text style={styles.PesananTitle}>Pesanan Anda</Text>
+          <View style={styles.PesananItem}>
+            <Text style={styles.PesananText}>Pempek Campur (x1)</Text>
+            <Text style={styles.PesananText}>Rp 15,000</Text>
+          </View>
+          {/* Tambahkan item pesanan lain di sini */}
+          <View style={styles.PesananTotal}>
+            <Text style={styles.PesananText}>Total:</Text>
+            <Text style={styles.PesananText}>Rp 15,000</Text>
+          </View>
+          <TouchableOpacity style={styles.lanjutPesanButton} onPress={handleLanjutPesanButtonPress}>
+            <Text style={styles.lanjutPesanButtonText}>Lanjutkan Pesanan</Text>
+          </TouchableOpacity>
+
         </View>
       </View>
     </ScrollView>
@@ -55,30 +55,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFCC29',
     padding: 16,
   },
-  MakananImage: {
+  PesananImage: {
     width: '100%',
     height: 200,
     borderRadius: 8,
     marginBottom: 20,
   },
-  MakananDetails: {
+  PesananDetails: {
     marginBottom: 20,
   },
-  MakananTitle: {
+  PesananTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'black',
     fontFamily: 'Arial',
   },
-  MakananSubtitle: {
+  PesananSubtitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'black',
     fontFamily: 'Arial',
   },
-  MakananText: {
+  PesananText: {
     color: 'black',
     fontFamily: 'Arial',
   },
@@ -118,29 +118,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'Arial', // Ganti jenis huruf jika diperlukan
   },
-  pesananContainer: {
+  PesananContainer: {
     backgroundColor: 'white',
     padding: 16,
     borderRadius: 8,
     marginTop: 20,
   },
-  pesananTitle: {
+  PesananTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'black',
     fontFamily: 'Arial',
   },
-  pesananItem: {
+  PesananItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
   },
-  pesananText: {
+  PesananText: {
     color: 'black',
     fontFamily: 'Arial',
   },
-  pesananTotal: {
+  PesananTotal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
@@ -163,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TekwanScreen;
+export default PesananScreen;

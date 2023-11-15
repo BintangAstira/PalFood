@@ -1,5 +1,6 @@
-import * as React from 'react';
-import {Home, Makanan, Profile} from './src/screens';
+import React from 'react';
+import Router from './src/navigation/Router';  // Pernyataan impor yang diperbaiki
+
 export default function App() {
-  return <Profile/>;
+  return <Router />;
 }
