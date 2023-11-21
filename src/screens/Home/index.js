@@ -1,12 +1,27 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { Animated, ScrollView, StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const App = () => {
   const navigation = useNavigation();
-
+  const scaleAnim = useRef(new Animated.Value(1)).current;
   const handlePesanButtonPress = (recipe) => {
     navigation.navigate('Pesanan', { recipe });
+    // Menjalankan animasi scaling saat tombol "Pesan" ditekan
+    Animated.timing(scaleAnim, {
+      toValue: 1.2, // Meningkatkan skala menjadi 1.2
+      duration: 1000, // Durasi animasi dalam milidetik
+      useNativeDriver: true,
+    }).start(() => {
+      // Setelah animasi selesai, kembalikan skala ke nilai awal
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 0, // Animasi kembali langsung tanpa durasi
+        useNativeDriver: true,
+      }).start();
+      // Navigasi ke layar Pesanan
+      navigation.navigate('Pesanan', { recipe });
+    });
   };
   return (
     <View style={styles.container}>
@@ -20,7 +35,7 @@ const App = () => {
       <ScrollView style={styles.recipeContainer}>
         {BlogList.map((recipe) => (
           <View key={recipe.id} style={styles.recipeItem}>
-            <Image source={{ uri: recipe.image }} style={styles.recipeImage} onPress={() => navigation.navigate('Pesanan')}/>
+            <Image source={{ uri: recipe.image }} style={styles.recipeImage} onPress={() => navigation.navigate('Pesanan')} />
             <Text style={styles.recipeTitle}>{recipe.title}</Text>
             <Text style={styles.recipeCategory}>{recipe.category}</Text>
             <Text style={styles.recipeLevel}>{recipe.level}</Text>

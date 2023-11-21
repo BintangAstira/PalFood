@@ -1,10 +1,20 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, TextInput } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { Animated, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
 
 
 const PesananScreen = () => {
   const navigation = useNavigation();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000, // Sesuaikan durasinya sesuai kebutuhan
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
+
   const handleLanjutPesanButtonPress = () => {
     navigation.navigate('Transaksi'); // Navigasi ke layar TransaksiScreen
   };
@@ -14,9 +24,10 @@ const PesananScreen = () => {
   const handlePesanButtonPress = (selectedTransaction) => {
     navigation.navigate('Pesanan', { selectedTransaction });
   };
-  
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <Animated.ScrollView style={{ ...styles.container, opacity: fadeAnim }}
+      contentContainerStyle={styles.container}>
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Cari Pesanan" />
         <TouchableOpacity style={styles.cariButton} onPress={handleCariButtonPress}>
@@ -24,11 +35,11 @@ const PesananScreen = () => {
         </TouchableOpacity>
       </View>
       <Image
-        style={styles.MakananImage}
+        style={styles.PesananImage}
         source={{ uri: 'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/republika/member/7fo6bnylc7.jpg', }}
       />
-      <View style={styles.MakananDetails}>
-        <Text style={styles.MakananTitle}>Pempek Campur</Text>
+      <View style={styles.PesananDetails}>
+        <Text style={styles.PesananTitle}>Pempek Campur</Text>
         <View style={styles.PesananContainer}>
           <Text style={styles.PesananTitle}>Pesanan Anda</Text>
           <View style={styles.PesananItem}>
@@ -46,7 +57,7 @@ const PesananScreen = () => {
 
         </View>
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 };
 
@@ -60,6 +71,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 8,
     marginBottom: 20,
+    marginTop: 10, // Menambahkan jarak di bagian atas kontainer pencarian
   },
   PesananDetails: {
     marginBottom: 20,
