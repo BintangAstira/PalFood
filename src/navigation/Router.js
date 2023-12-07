@@ -7,7 +7,9 @@ import ProfileScreen from '../screens/Profile';
 import { Home2, Bag2, Profile } from 'iconsax-react-native';
 import PesananScreen from '../screens/Makanan';
 import TransaksiScreen from '../screens/Transaksi';
-//import DetailScreen from '../screens/Detail';
+//import PesanMakanan from './screens/PesanMakanan';
+//import Pesanan from './screeens/Pesanan';
+
 
 
 
@@ -53,7 +55,6 @@ const App = () => {
                         headerShown: false,
                     }}
                 />
-
                 <Tab.Screen
                     name="Profil"
                     component={ProfileScreen}

@@ -1,11 +1,16 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Animated, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { useRoute } from '@react-navigation/native';
 
 
 const PesananScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute(); // Tambahkan ini
+  const [quantity, setQuantity] = React.useState(1);
+  const [namaPemesan, setNamaPemesan] = React.useState('');
+  const [alamatPengiriman, setAlamatPengiriman] = React.useState('');
+  const hargaPerItem = 15000; // Harga per item, sesuaikan sesuai kebutuhan
   const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -16,13 +21,22 @@ const PesananScreen = () => {
   }, [fadeAnim]);
 
   const handleLanjutPesanButtonPress = () => {
-    navigation.navigate('Transaksi'); // Navigasi ke layar TransaksiScreen
+    // Hitung total berdasarkan jumlah dan hargaPerItem
+
+    const total = quantity * hargaPerItem;
+    navigation.navigate('Transaksi', { quantity, total, namaPemesan, alamatPengiriman });
   };
   const handleCariButtonPress = () => {
     console.log('Tombol Cari Makanan ditekan');
   };
   const handlePesanButtonPress = (selectedTransaction) => {
-    navigation.navigate('Pesanan', { selectedTransaction });
+    // Implementasikan logika untuk menangani pesanan di sini
+    // Contoh sederhana: Menampilkan informasi pesanan di console
+    console.log(`Pesanan: ${quantity} item`);
+    console.log(`Nama Pemesan: ${namaPemesan}`);
+    console.log(`Alamat Pengiriman: ${alamatPengiriman}`);
+    console.log(`Total Harga: ${quantity * hargaPerItem}`);
+    // Lanjutkan dengan logika lainnya, seperti pengiriman pesanan ke server atau layar konfirmasi
   };
 
   return (
@@ -39,22 +53,47 @@ const PesananScreen = () => {
         source={{ uri: 'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/republika/member/7fo6bnylc7.jpg', }}
       />
       <View style={styles.PesananDetails}>
-        <Text style={styles.PesananTitle}>Pempek Campur</Text>
         <View style={styles.PesananContainer}>
-          <Text style={styles.PesananTitle}>Pesanan Anda</Text>
+          <Text style={styles.PesananTitle}>Jumlah Pesanan</Text>
+          <TextInput
+            style={styles.PesananInput}
+            value={quantity.toString()}
+            onChangeText={(text) => setQuantity(parseInt(text) || 1)}
+            keyboardType="numeric"
+          />
+          {/* Tambahkan TextInput untuk Nama Pemesan */}
+          <TextInput
+            style={styles.PesananInput}
+            placeholder="Nama Pemesan"
+            value={namaPemesan}
+            onChangeText={setNamaPemesan}
+            // Tambahkan properti borderBottomColor dan borderBottomWidth
+            // Untuk memberi efek frame pada TextInput
+            borderBottomColor="black"
+            borderBottomWidth={1}
+          />
+          <TextInput
+            style={styles.PesananInput}
+            placeholder="Alamat Pengiriman"
+            value={alamatPengiriman}
+            onChangeText={setAlamatPengiriman}
+            // Tambahkan properti borderBottomColor dan borderBottomWidth
+            // Untuk memberi efek frame pada TextInput
+            borderBottomColor="black"
+            borderBottomWidth={1}
+          />
           <View style={styles.PesananItem}>
-            <Text style={styles.PesananText}>Pempek Campur (x1)</Text>
-            <Text style={styles.PesananText}>Rp 15,000</Text>
+            <Text style={styles.PesananText}>Pempek Campur (x{quantity})</Text>
+            <Text style={styles.PesananText}>Rp {hargaPerItem}</Text>
           </View>
-          {/* Tambahkan item pesanan lain di sini */}
           <View style={styles.PesananTotal}>
             <Text style={styles.PesananText}>Total:</Text>
-            <Text style={styles.PesananText}>Rp 15,000</Text>
+            <Text style={styles.PesananText}>Rp {quantity * hargaPerItem}</Text>
           </View>
-          <TouchableOpacity style={styles.lanjutPesanButton} onPress={handleLanjutPesanButtonPress}>
+          {/* Ganti onPress dengan handlePesanButtonPress */}
+          <TouchableOpacity style={styles.lanjutPesanButton} onPress={handlePesanButtonPress}>
             <Text style={styles.lanjutPesanButtonText}>Lanjutkan Pesanan</Text>
           </TouchableOpacity>
-
         </View>
       </View>
     </Animated.ScrollView>

@@ -1,12 +1,17 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Animated, ScrollView, StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const App = () => {
   const navigation = useNavigation();
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
+
   const handlePesanButtonPress = (recipe) => {
-    navigation.navigate('Pesanan', { recipe });
+    // Simpan resep yang dipilih di state
+    setSelectedRecipe(recipe);
+
     // Menjalankan animasi scaling saat tombol "Pesan" ditekan
     Animated.timing(scaleAnim, {
       toValue: 1.2, // Meningkatkan skala menjadi 1.2
@@ -18,10 +23,12 @@ const App = () => {
         toValue: 1,
         duration: 0, // Animasi kembali langsung tanpa durasi
         useNativeDriver: true,
-      }).start();
-      // Navigasi ke layar Pesanan
-      navigation.navigate('Pesanan', { recipe });
+      }).start(() => {
+       // Navigasi ke layar Pesanan dan kirim data resep yang dipilih
+      navigation.navigate('Pesanan', { selectedRecipe: { id: recipe.id, title: recipe.title, /* tambahkan properti lain jika diperlukan */ } })
+      });
     });
+
   };
   return (
     <View style={styles.container}>
@@ -153,7 +160,7 @@ const styles = StyleSheet.create({
 const BlogList = [
   {
     id: 1,
-    title: 'Pempek',
+    title: 'Pempek Campur',
     category: 'Makanan',
     image: 'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/republika/member/7fo6bnylc7.jpg',
     level: 'Pilih Tingkat Kepedasan Anda : Pedas , Sedang , Tidak Pedas',
