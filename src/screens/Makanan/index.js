@@ -1,47 +1,99 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Animated, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, TextInput } from 'react-native';
+import { Animated, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
-
+import axios from 'axios';
 
 const PesananScreen = () => {
   const navigation = useNavigation();
-  const route = useRoute(); // Tambahkan ini
-  const [quantity, setQuantity] = React.useState(1);
+  const route = useRoute();
+  const [quantity, setQuantity] = React.useState('');
   const [namaPemesan, setNamaPemesan] = React.useState('');
   const [alamatPengiriman, setAlamatPengiriman] = React.useState('');
-  const hargaPerItem = 15000; // Harga per item, sesuaikan sesuai kebutuhan
+  const [totalHarga, setTotalHarga] = React.useState('');
+  const hargaPerItem = 15000;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [loading, setLoading] = useState(false);
+
+  const handleUpload = async () => {
+    try {
+      setLoading(true);
+      await axios.post('https://6572940ad61ba6fcc0153aeb.mockapi.io/palfoodapp/pesanan', {
+        // sesuaikan
+        qantity: quantity,
+        namaPemesan: namaPemesan,
+        alamatPengiriman: alamatPengiriman,
+        totalHarga: totalHarga,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+      setLoading(false);
+      console.log('Upload berhasil');
+      Alert.alert('Sukses', 'Pesanan berhasil diupload ke server.');
+    } catch (error) {
+      console.error('Error uploading pesanan:', error);
+      Alert.alert('Error', 'Terjadi kesalahan saat mengirim pesanan.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1000, // Sesuaikan durasinya sesuai kebutuhan
+      duration: 1000,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
 
-  const handleLanjutPesanButtonPress = () => {
-    // Hitung total berdasarkan jumlah dan hargaPerItem
+  const handleLanjutPesanButtonPress = async () => {
+    try {
+      // Hitung total berdasarkan jumlah dan hargaPerItem
+      const total = quantity * hargaPerItem;
 
-    const total = quantity * hargaPerItem;
-    navigation.navigate('Transaksi', { quantity, total, namaPemesan, alamatPengiriman });
+      // Navigasi ke layar Data dengan membawa data pesanan
+      navigation.navigate('DataScreen', { quantity, namaPemesan, alamatPengiriman, totalHarga });
+
+      // Upload data pesanan ke API
+      await handleUpload();
+    } catch (error) {
+      // Handle error
+      console.error('Error during navigation:', error);
+    }
   };
+
   const handleCariButtonPress = () => {
     console.log('Tombol Cari Makanan ditekan');
   };
-  const handlePesanButtonPress = (selectedTransaction) => {
-    // Implementasikan logika untuk menangani pesanan di sini
-    // Contoh sederhana: Menampilkan informasi pesanan di console
-    console.log(`Pesanan: ${quantity} item`);
-    console.log(`Nama Pemesan: ${namaPemesan}`);
-    console.log(`Alamat Pengiriman: ${alamatPengiriman}`);
-    console.log(`Total Harga: ${quantity * hargaPerItem}`);
-    // Lanjutkan dengan logika lainnya, seperti pengiriman pesanan ke server atau layar konfirmasi
+
+  const handlePesanButtonPress = async () => {
+    try {
+      const response = await axios.post('https://6572940ad61ba6fcc0153aeb.mockapi.io/palfoodapp/pesanan', {
+        quantity,
+        namaPemesan,
+        alamatPengiriman,
+        totalHarga: quantity * hargaPerItem,
+      });
+
+      console.log(response.data);
+      Alert.alert('Sukses', 'Pesanan berhasil dikirim ke server.');
+
+      setQuantity('');
+      setNamaPemesan('');
+      setAlamatPengiriman('');
+      setTotalHarga('');
+    } catch (error) {
+      console.error('Error uploading pesanan:', error);
+      Alert.alert('Error', 'Terjadi kesalahan saat mengirim pesanan.');
+    }
+    handleUpload();
   };
 
   return (
-    <Animated.ScrollView style={{ ...styles.container, opacity: fadeAnim }}
-      contentContainerStyle={styles.container}>
+    <Animated.ScrollView style={{ ...styles.container, opacity: fadeAnim }} contentContainerStyle={styles.container}>
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Cari Pesanan" />
         <TouchableOpacity style={styles.cariButton} onPress={handleCariButtonPress}>
@@ -52,49 +104,36 @@ const PesananScreen = () => {
         style={styles.PesananImage}
         source={{ uri: 'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/republika/member/7fo6bnylc7.jpg', }}
       />
-      <View style={styles.PesananDetails}>
-        <View style={styles.PesananContainer}>
-          <Text style={styles.PesananTitle}>Jumlah Pesanan</Text>
-          <TextInput
-            style={styles.PesananInput}
-            value={quantity.toString()}
-            onChangeText={(text) => setQuantity(parseInt(text) || 1)}
-            keyboardType="numeric"
-          />
-          {/* Tambahkan TextInput untuk Nama Pemesan */}
-          <TextInput
-            style={styles.PesananInput}
-            placeholder="Nama Pemesan"
-            value={namaPemesan}
-            onChangeText={setNamaPemesan}
-            // Tambahkan properti borderBottomColor dan borderBottomWidth
-            // Untuk memberi efek frame pada TextInput
-            borderBottomColor="black"
-            borderBottomWidth={1}
-          />
-          <TextInput
-            style={styles.PesananInput}
-            placeholder="Alamat Pengiriman"
-            value={alamatPengiriman}
-            onChangeText={setAlamatPengiriman}
-            // Tambahkan properti borderBottomColor dan borderBottomWidth
-            // Untuk memberi efek frame pada TextInput
-            borderBottomColor="black"
-            borderBottomWidth={1}
-          />
-          <View style={styles.PesananItem}>
-            <Text style={styles.PesananText}>Pempek Campur (x{quantity})</Text>
-            <Text style={styles.PesananText}>Rp {hargaPerItem}</Text>
-          </View>
-          <View style={styles.PesananTotal}>
-            <Text style={styles.PesananText}>Total:</Text>
-            <Text style={styles.PesananText}>Rp {quantity * hargaPerItem}</Text>
-          </View>
-          {/* Ganti onPress dengan handlePesanButtonPress */}
-          <TouchableOpacity style={styles.lanjutPesanButton} onPress={handlePesanButtonPress}>
-            <Text style={styles.lanjutPesanButtonText}>Lanjutkan Pesanan</Text>
-          </TouchableOpacity>
-        </View>
+      <View>
+        <TextInput
+          value={quantity}
+          onChangeText={(text) => setQuantity(text)}
+          keyboardType="numeric"
+          placeholder="Jumlah Pesanan"
+          style={styles.input}
+        />
+        <TextInput
+          value={namaPemesan}
+          onChangeText={(text) => setNamaPemesan(text)}
+          placeholder="Nama Pemesan"
+          style={styles.input}
+        />
+        <TextInput
+          value={alamatPengiriman}
+          onChangeText={(text) => setAlamatPengiriman(text)}
+          placeholder="Alamat Pengiriman"
+          style={styles.input}
+        />
+        <TextInput
+          value={totalHarga}
+          placeholder="Total Harga"
+          style={styles.input}
+          editable={false}
+        />
+
+        <TouchableOpacity style={styles.lanjutPesanButton} onPress={handleLanjutPesanButtonPress}>
+          <Text style={styles.lanjutPesanButtonText}>Lanjutkan Pesanan</Text>
+        </TouchableOpacity>
       </View>
     </Animated.ScrollView>
   );
@@ -210,6 +249,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'Arial',
+  },
+  input: {
+    height: 40,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 12,
+    paddingLeft: 8,
     fontFamily: 'Arial',
   },
 });

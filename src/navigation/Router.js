@@ -7,8 +7,8 @@ import ProfileScreen from '../screens/Profile';
 import { Home2, Bag2, Profile } from 'iconsax-react-native';
 import PesananScreen from '../screens/Makanan';
 import TransaksiScreen from '../screens/Transaksi';
-//import PesanMakanan from './screens/PesanMakanan';
-//import Pesanan from './screeens/Pesanan';
+import EditForm from '../screens/Data'; // Impor EditForm
+import DataScreen from '../screens/EditForm'; // Impor DataScreen
 
 
 
@@ -25,6 +25,8 @@ const HomeStack = () => {
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Pesanan" component={PesananScreen} />
             <Stack.Screen name="Transaksi" component={TransaksiScreen} />
+            <Stack.Screen name="EditForm" component={EditForm} />
+            <Stack.Screen name="DataScreen" component={DataScreen} />
         </Stack.Navigator>
     );
 };
