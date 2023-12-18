@@ -21,7 +21,7 @@ const EditForm = () => {
 
   const handleEditButtonPress = () => {
     const total = quantity * hargaPerItem;
-    navigation.navigate('Transaksi', { quantity, total, namaPemesan, alamatPengiriman });
+    navigation.navigate('Transaksi', { quantity, total, namaPemesan, alamatPengiriman, total });
   };
 
   return (

@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Animated, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
-import axios from 'axios';
+import firestore from '@react-native-firebase/firestore';
 
 const PesananScreen = () => {
   const navigation = useNavigation();
@@ -18,18 +18,11 @@ const PesananScreen = () => {
   const handleUpload = async () => {
     try {
       setLoading(true);
-      await axios.post('https://6572940ad61ba6fcc0153aeb.mockapi.io/palfoodapp/pesanan', {
-        // sesuaikan
-        qantity: quantity,
-        namaPemesan: namaPemesan,
-        alamatPengiriman: alamatPengiriman,
-        totalHarga: totalHarga,
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
+      await firestore().collection('pesanan').add({ // Ganti 'pesanan' sesuai dengan koleksi Firebase Anda
+        quantity: Number(quantity),
+        namaPemesan,
+        alamatPengiriman,
+        totalHarga: Number(totalHarga),
       });
       setLoading(false);
       console.log('Upload berhasil');
@@ -71,13 +64,13 @@ const PesananScreen = () => {
 
   const handlePesanButtonPress = async () => {
     try {
-      const response = await axios.post('https://6572940ad61ba6fcc0153aeb.mockapi.io/palfoodapp/pesanan', {
+      const recipeData ={
         quantity,
         namaPemesan,
         alamatPengiriman,
         totalHarga: quantity * hargaPerItem,
-      });
-
+      };
+      await firestore().collection('pesanan').add(recipeData);
       console.log(response.data);
       Alert.alert('Sukses', 'Pesanan berhasil dikirim ke server.');
 
@@ -126,7 +119,8 @@ const PesananScreen = () => {
         />
         <TextInput
           value={totalHarga}
-          placeholder="Total Harga"
+          onChangeText={(text) => setTotalHarga(text)}
+          placeholder="Total Harga" 
           style={styles.input}
           editable={false}
         />

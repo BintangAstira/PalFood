@@ -32,7 +32,7 @@ const App = () => {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Palembang Food</Text>
+      <Text style={styles.title}>PalFood</Text>
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Cari Makanan..." />
         <TouchableOpacity style={styles.searchButton}>

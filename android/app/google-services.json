@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "467931458609",
+    "project_id": "palfoodapp",
+    "storage_bucket": "palfoodapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467931458609:android:7175fbb0fd0cd3a24fb910",
+        "android_client_info": {
+          "package_name": "com.palfood"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrRMcBkq_EAULKMvKUVMiy4gxNQpXRSF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
