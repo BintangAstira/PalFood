@@ -3,6 +3,7 @@ import { Animated, StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, 
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const PesananScreen = () => {
   const navigation = useNavigation();
@@ -17,6 +18,7 @@ const PesananScreen = () => {
 
   const handleUpload = async () => {
     try {
+      const authorId = auth().currentUser.uid;
       setLoading(true);
       await firestore().collection('pesanan').add({ // Ganti 'pesanan' sesuai dengan koleksi Firebase Anda
         quantity: Number(quantity),
@@ -64,7 +66,7 @@ const PesananScreen = () => {
 
   const handlePesanButtonPress = async () => {
     try {
-      const recipeData ={
+      const recipeData = {
         quantity,
         namaPemesan,
         alamatPengiriman,

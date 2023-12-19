@@ -1,19 +1,64 @@
-import React from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Image, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth';
 
-const ProfileScreen = () => {
+
+const ProfileScreen = ({ navigation }) => {
   const userData = {
     name: 'Bintang Astira',
     email: 'Bintang@example.com',
     address: 'Pondok Blimbing Indah, Kota Malang',
     phoneNumber: '08123456789',
   };
-
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const handleEditProfile = () => {
     // Fungsi yang akan dijalankan ketika tombol "Edit Profil" ditekan
     // Anda dapat menavigasi pengguna ke layar pengeditan profil atau menampilkan formulir pengeditan di sini
     console.log('Tombol "Edit Profil" ditekan!');
   };
+
+  const handleLogin = async () => {
+    try {
+      const userCredential = await auth().signInWithEmailAndPassword(email, password);
+      const userToken = await userCredential.user.getIdToken();
+      const expirationInMilliseconds = 30 * 24 * 60 * 60 * 1000; //hari * jam * menit * detik * milidetik
+      const expirationTime = new Date().getTime() + expirationInMilliseconds;
+      const dataToStore = {
+        userToken,
+        expirationTime,
+      };
+      await AsyncStorage.setItem('userData', JSON.stringify(dataToStore));
+      navigation.navigate('MainApp');
+    } catch (error) {
+      console.error('Login Error:', error.message);
+      let errorMessage = 'Terjadi kesalahan saat login.';
+      if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email tidak valid.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Password salah.';
+      } else if (error.code === 'auth/user-not-found') {
+        errorMessage = 'User tidak ditemukan.';
+      }
+      Alert.alert('Error', errorMessage);
+    }
+  };
+  useEffect(() => {
+    // Menggunakan useEffect untuk memantau perubahan pada email dan password
+    updateLoginButtonStatus();
+  }, [email, password]);
+
+  const updateLoginButtonStatus = () => {
+    // Memastikan tombol login hanya dapat diakses jika email dan password terisi
+    if (email.trim() && password.trim()) {
+      setLoginDisabled(false);
+    } else {
+      setLoginDisabled(true);
+    }
+  };
+
+  const [isLoginDisabled, setLoginDisabled] = useState(true);
 
   return (
     <View style={styles.container}>
@@ -31,6 +76,9 @@ const ProfileScreen = () => {
       </View>
       <TouchableOpacity style={styles.editProfileButton} onPress={handleEditProfile}>
         <Text style={styles.editProfileButtonText}>Edit Profil</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
     </View>
   );
@@ -74,7 +122,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  
+
+  loginButton: {
+    backgroundColor: '#28a745', // Warna latar belakang tombol login
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  loginButtonText: {
+    color: 'white', // Warna teks tombol login
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default ProfileScreen;
